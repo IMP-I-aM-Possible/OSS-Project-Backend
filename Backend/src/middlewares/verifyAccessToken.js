@@ -5,7 +5,7 @@ dotenv.config();
 
 const verifyAccessToken = async (req, res, next) => {
     // console.log(req.headers.authorization);
-    // console.log(req.body.id);
+    //console.log(req.body.id);
     try {
         if(!req.headers.authorization) {
             return res.json({
@@ -13,11 +13,10 @@ const verifyAccessToken = async (req, res, next) => {
                 msg : "no Token"
             });
         } else {
+
             const decoded = jwt.verify(req.headers.authorization, process.env.JWT_SECRET_KEY);
 
             const userId = decoded.id;
-
-            console.log(req.body);
 
             if(userId.id !== req.body.id) {
                 req.body.id = undefined;

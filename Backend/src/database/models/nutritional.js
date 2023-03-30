@@ -1,5 +1,5 @@
 import sequelize from "./index.js";
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 export class Nutritionals extends Model{
     //buffer에 저장하면 binary 형태로 저장이 되기 때문에 json type으로 다시 변환시켜주기 위함
@@ -12,38 +12,43 @@ export class Nutritionals extends Model{
 Nutritionals.init(
     {
         id : {
-            type : DataTypes.STRING(20),
+            type : DataTypes.CHAR(9),
             primaryKey : true
         },
 
         company : {
-            type : DataTypes.STRING(80),
+            type : DataTypes.STRING(60),
             allowNull : false
         },
 
         name : {
-            type : DataTypes.TEXT,
+            type : DataTypes.STRING(100),
             allowNull : false
         },
 
-        price : {
-            type : DataTypes.INTEGER,
-            allowNull : false
-        },
-
-        barcode : {
-            type : DataTypes.STRING(45),
-            allowNull : false
-        },
-
-        stars : {
+        iherb_price : {
             type : DataTypes.FLOAT,
-            allowNull : false
         },
 
-        purchase : {
+        naver_price : {
+            type : DataTypes.FLOAT,
+        },
+
+        iherb_link : {
+            type : DataTypes.TEXT,
+        },
+
+        naver_link : {
+            type : DataTypes.TEXT,
+        },
+
+        
+        rating : {
+            type : DataTypes.FLOAT,
+        },
+
+        rating_count : {
             type : DataTypes.INTEGER,
-            allowNull : false
         },
 
         caution : {
@@ -51,19 +56,35 @@ Nutritionals.init(
             allowNull : false
         },
 
-        info : {
+        nutrient_info : {
             type : DataTypes.JSON,
             allowNull : false
         },
 
-        link : {
-            type : DataTypes.TEXT,
-            allowNull : false
+        sub_nutrient_info : {
+            type : DataTypes.JSON,
         },
 
-        eating : {
-            type : DataTypes.TEXT,
-            allowNull : false
+        daily_eating : {
+            type : DataTypes.STRING(60),
+        },
+        
+        // created_at : {
+        //     type : 'TIMESTAMP',
+        //     defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),
+        //     allowNull : false
+        // },
+
+        // updated_at : {
+        //     type : 'TIMESTAMP',
+        //     defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),
+        //     allowNull : false
+        // },
+
+        expired_at : {
+            type : 'TIMESTAMP',
+            defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull : true
         }
     },
 

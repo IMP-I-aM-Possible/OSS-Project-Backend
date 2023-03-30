@@ -12,6 +12,13 @@ const userService = {
 
         const response = await User.login(body.id);
 
+        if(response.expired_at != null) {
+            return { 
+                sc : 200,
+                msg : "회원탈퇴 계정"
+            }
+        }
+
         if (response) {
             if (await bcrypt.compare(body.pw, response.pw)) {
 
@@ -35,8 +42,6 @@ const userService = {
     },
 
     signup: async (body) => {
-
-        console.log(body);
 
         const bcryptPw = await bcrypt.hash(body.pw, 10);
         body.pw = bcryptPw;
@@ -140,11 +145,10 @@ const userService = {
         const username = (await User.findById(body.id)).username;
         const userinfo = await User.userInfo(body.id);
         const nutrient = await Nutritional.userNutrient(body.id); // 섭취 영양제
-
         const countNutritional = Object.keys(nutrient).length; // 영양제 수
-
-        const daily = await Nutritional.getDaily(userinfo.age, userinfo.gender); // 해당 나이 성별에 맞는 하루 영양소 섭취 기준
-        const dailyEating = await Nutritional.getDailyEating(userinfo.age, userinfo.gender); // 권장, 상한 섭취량 제공
+        const userAge = await User.getAge(body.id); // 사용자 나이
+        const daily = await Nutritional.getDaily(userAge, userinfo.gender); // 해당 나이 성별에 맞는 하루 영양소 섭취 기준
+        const dailyEating = await Nutritional.getDailyEating(userAge, userinfo.gender); // 권장, 상한 섭취량 제공
 
         let userDaily = {}; // 42개 중 필요한 값 저장
         let userEating = {} // 42개 영양소중 사용자가 먹는 영양소만 저장할 object
@@ -156,19 +160,17 @@ const userService = {
 
         for (let i = 0; i < Object.keys(nutrient).length; i++) {
 
-            const eating = await Nutritional.eatingNutrient(nutrient[i].nutrient_name);
-            const key = Object.keys(eating.info);
+            const eating = await Nutritional.eatingNutrient(nutrient[i].nid);
+            const key = Object.keys(eating.nutrient_info);
 
             for (let j = 0; j < key.length; j++) { //포함된 영양소를 반복하면서 포함된 값을 더함
-                userDaily[key[j]].eating += parseFloat(nutrientFunction.changeValue(eating.info[key[j]], userDaily[key[j]].unit));
+                userDaily[key[j]].eating += parseFloat(nutrientFunction.changeValue(eating.nutrient_info[key[j]], userDaily[key[j]].unit));
                 userEating[key[j]] = userDaily[key[j]]; //사용자가 먹는 것만 추가
             }
         }
 
-        console.log(userEating);
-
         const countNutrient = Object.keys(userEating).length; // 중복 제외 영양소 수
-        const eatingName = JSON.parse(JSON.stringify(Array.from(Object.keys(userEating)))); // 사용자 섭취 중인 영양소
+        const eatingName = Object.keys(userEating); // 사용자 섭취 중인 영양소
 
         const healthScore = 90; // 건강 점수
         const otherEating = 0; // 다른 사람 평균
@@ -178,7 +180,7 @@ const userService = {
         return {
             sc: 200,
             username,
-            healthScore, // 미완성
+            healthScore,
             nutrient,
             countNutritional,
             countNutrient,

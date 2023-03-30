@@ -62,11 +62,11 @@ router.post(
     userController.usernameCheck
 );
 
-//회원 정보 입력
-router.post(
-    "/signup/info",
-    userController.inputInfo
-);
+//회원 정보 입력 (삭제 예정)
+// router.post(
+//     "/signup/info",
+//     userController.inputInfo
+// );
 
 //로그아웃
 router.delete(

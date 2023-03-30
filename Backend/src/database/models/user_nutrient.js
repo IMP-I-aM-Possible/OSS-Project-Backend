@@ -11,26 +11,28 @@ export class UserNutrient extends Model{
 
 UserNutrient.init(
     {
-        idx : {
-            type: DataTypes.INTEGER,
+        uid : {
+            type: DataTypes.STRING(25),
             primaryKey : true,
-            autoIncrement : true
-        },
-
-        id : {
-            type: DataTypes.STRING(20),
             allowNull : false
         },
 
-        nutrient_name : {
-            type: DataTypes.STRING(20),
-            allowNull : true
+        nid : {
+            type: DataTypes.CHAR(9),
+            primaryKey : true,
+            allowNull : false
         },
 
         count : {
             type: DataTypes.INTEGER,
-            allowNull : true
-        }
+            allowNull : false
+        },
+
+        // created_at : {
+        //     type : 'TIMESTAMP',
+        //     defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),
+        //     allowNull : false
+        // }
     },
 
     {

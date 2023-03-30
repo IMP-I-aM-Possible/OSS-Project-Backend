@@ -1,7 +1,6 @@
-import { Nutritionals } from "./models/nutritional.js";
+import { Sequelize } from "sequelize";
+import sequelize from "./models/index.js";
 import { Users } from "./models/user.js";
-import { UserInfo } from "./models/userinfo.js"
-import { UserNutrient } from "./models/user_nutrient.js";
 
 const User = {
     login : async (id) => {
@@ -10,30 +9,49 @@ const User = {
     },
 
     signup : async (client) => {
-        const user = await Users.create({
-            id : `${client.id}`,
-            email : `${client.email}`,
-            pw : `${client.pw}`,
-            username : `${client.username}`
-        });
+
+        console.log(client);
+        const user = await Users.create(client
+            // id : `${client.id}`,
+            // email : `${client.email}`,
+            // pw : `${client.pw}`,
+            // username : `${client.username}`,
+            // height : `${client.height}`,
+            // weight : `${client.weight}`,
+            // birth : `${client.birth}`,
+            // gender : `${client.gender}`
+        );
 
         return user;
     },
 
-    inputInfo : async (client) => {
-        const userinfo = await UserInfo.create({
-            id : `${client.id}`,
-            height : `${client.height}`,
-            weight : `${client.weight}`,
-            gender : `${client.gender}`,
-            age : `${client.age}`
-        });
+    // 회원 정보 입력 (삭제 예정)
+    // inputInfo : async (client) => {
+    //     const userinfo = await Users.create({
+    //         id : `${client.id}`,
+    //         email : `${client.email}`,
+    //         pw : `${client.pw}`,
+    //         username : `${client.username}`,
+    //         height : `${client.height}`,
+    //         weight : `${client.weight}`,
+    //         birth : `${client.birth}`,
+    //         gender : `${client.gender}`
+    //     });
 
-        return userinfo;
+    //     return userinfo;
+    // },
+
+    // 사용자 나이 추출 (현재 - 생년월일)
+    getAge : async (id) => {
+        const user = await Users.findOne({ where : { id : `${id}`}, raw : true });
+        const query = `SELECT FLOOR((TO_DAYS(NOW()) - (TO_DAYS(${user.birth}))) / 365);`;
+        const getAge = await sequelize.query(query, { type : Sequelize.QueryTypes.SELECT });
+        const age = Object.values(getAge[0])[0];
+        return age;
     },
 
     userInfo : async (id) => {
-        const user = await UserInfo.findOne({ where : { id : `${id}` }, raw : true });
+        const user = await Users.findOne({ where : { id : `${id}` }, raw : true });
         return user;
     },
 
@@ -54,10 +72,11 @@ const User = {
     },
 
     secede : async (id) => {
-        const user = await Users.destroy({ where : { id : `${id}`} });
-        const userinfo = await UserInfo.destroy({ where : { id : `${id}`} });
-        const userNutrient = await UserNutrient.destroy({where : {id : `${id}`}});
-        return { user, userinfo, userNutrient };
+        const user = await Users.findOne({ where : { id : `${id}`}, raw : true });
+        if(user) {
+            user = await Users.update({expired_at : Sequelize.literal("now()")}, {where : {id : `${id}`}})
+        }
+        return user;
     }
     
 };
