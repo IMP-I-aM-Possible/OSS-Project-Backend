@@ -2,7 +2,7 @@ import { Nutritionals } from "./models/nutritional.js";
 import { DailyNutrient } from "./models/dailyNutrient.js";
 import { UserNutrient } from "./models/user_nutrient.js";
 import sequelize from "./models/index.js";
-import { Sequelize } from "sequelize";
+import { Sequelize, Op } from "sequelize";
 
 const Nutritional = { 
     getDaily : async (age, gender) => {
@@ -24,7 +24,7 @@ const Nutritional = {
 
     // 상품 전체
     getNutritional : async (offset) => {
-        const nutritional = Nutritionals.findAll({attributes : ['id', 'company', 'name', 'iherb_price', 'naver_price', 'rating', 'rating_count'], offset : (offset - 1) * 48, limit : 48, raw : true });
+        const nutritional = await Nutritionals.findAll({attributes : ['id', 'company', 'name', 'iherb_price', 'naver_price', 'rating', 'rating_count'], offset : (offset - 1) * 48, limit : 48, raw : true });
         return nutritional;
     },
 
@@ -40,7 +40,7 @@ const Nutritional = {
 
     // 상품 하나
     getProduct : async (nutritional_id) => {
-        const product = Nutritionals.findOne({ where : { id : nutritional_id }, raw : true });
+        const product = await Nutritionals.findOne({ where : { id : nutritional_id }, raw : true });
         return product;
     },
 
@@ -50,6 +50,14 @@ const Nutritional = {
         return includeInfo;
     },
 
+    getIncludeSubInfo : async (offset) => {
+        const includeSubInfo = await Nutritionals.findAll({ where : {
+            sub_nutrient_info : {[Op.substring] : '단백'}
+        }, offset : (offset - 1) * 48, limit : 48, raw : true });
+        //console.log(includeSubInfo);
+
+        return includeSubInfo;
+    }
     // test : async () => {
     //     const age = await sequelize.query(`SELECT (TO_DAYS(now())-TO_DAYS('100214')) / 365`, { type : sequelize.QueryTypes.SELECT });
     //     console.log(Math.floor(Object.values(age[0])));

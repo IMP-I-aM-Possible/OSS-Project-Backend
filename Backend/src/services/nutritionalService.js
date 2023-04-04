@@ -36,6 +36,16 @@ const nutritionalService = {
                 includeInfo
             };
         }
+    },
+
+    getIncludeSubInfo : async (offset) => {
+        const includeSubInfo = await Nutritional.getIncludeSubInfo(offset);
+        if (!includeSubInfo) return { sc : 400 };
+            return {
+                sc : 200,
+                includeSubInfo
+            };
+
     }
 }
 

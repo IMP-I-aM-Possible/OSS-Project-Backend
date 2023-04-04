@@ -168,14 +168,22 @@ const userService = {
                 userEating[key[j]] = userDaily[key[j]]; //사용자가 먹는 것만 추가
             }
         }
-
+        
         const countNutrient = Object.keys(userEating).length; // 중복 제외 영양소 수
         const eatingName = Object.keys(userEating); // 사용자 섭취 중인 영양소
 
+        let tmtl = 0; // 과하거나 부족 영양소 섭취량
+
+        for(let i = 0; i < Object.keys(userEating).length; i++) {
+            if(userEating[eatingName[i]].max != null && userEating[eatingName[i]].max - userEating[eatingName[i]].eating < 0) {
+                // tmtl[eatingName[i]] = userEating[eatingName[i]].commend - userEating[eatingName[i]].eating;
+                tmtl += 1;
+            }
+        }
+
         const healthScore = 90; // 건강 점수
         const otherEating = 0; // 다른 사람 평균
-        const recommendNutrient = { test : "recommend Test!"};
-        const tmtl = 77;
+        const recommendNutrient = {마그네슘 : 0, 비타민A : 0, 아미노산 : 0, 이동욱 : 100, 바보 : 200};
 
         return {
             sc: 200,

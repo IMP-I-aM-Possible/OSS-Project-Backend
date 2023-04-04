@@ -43,12 +43,12 @@ Users.init(
         },
 
         gender : {
-            type: DataTypes.STRING(1),
+            type: DataTypes.CHAR(1),
             allowNull : false
         },
 
         birth : {
-            type : DataTypes.CHAR(9),
+            type : DataTypes.DATE,
             allowNull : false
         },
 

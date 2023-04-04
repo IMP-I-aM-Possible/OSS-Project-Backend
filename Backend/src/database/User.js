@@ -44,7 +44,8 @@ const User = {
     // 사용자 나이 추출 (현재 - 생년월일)
     getAge : async (id) => {
         const user = await Users.findOne({ where : { id : `${id}`}, raw : true });
-        const query = `SELECT FLOOR((TO_DAYS(NOW()) - (TO_DAYS(${user.birth}))) / 365);`;
+        console.log(user.birth);
+        const query = `SELECT FLOOR(DATEDIFF(NOW(), '${user.birth}') / 365);`;
         const getAge = await sequelize.query(query, { type : Sequelize.QueryTypes.SELECT });
         const age = Object.values(getAge[0])[0];
         return age;
@@ -74,7 +75,7 @@ const User = {
     secede : async (id) => {
         const user = await Users.findOne({ where : { id : `${id}`}, raw : true });
         if(user) {
-            user = await Users.update({expired_at : Sequelize.literal("now()")}, {where : {id : `${id}`}})
+            user = await Users.update({expired_at : Sequelize.literal("NOW()")}, {where : {id : `${id}`}})
         }
         return user;
     }
