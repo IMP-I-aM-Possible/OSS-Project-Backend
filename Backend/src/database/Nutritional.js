@@ -52,9 +52,14 @@ const Nutritional = {
     },
 
     //사용자 섭취중인 영양제 추가
-    addUserNutrient : async (uid,nid,count) => {
-        const adduserNutrient = await UserNutrient.create({uid : `${uid}`, nid : `${nid}`, count : `${count}`})
+    addUserNutrient : async (uid,nid) => {
+        const adduserNutrient = await UserNutrient.create({uid : `${uid}`, nid : `${nid}`, count : 1})
         return adduserNutrient
+    },
+
+    deleteUserNutrient : async (uid,nid) => {
+        const deleteuserNutrient = await UserNutrient.destroy({ where : {uid : `${uid}`, nid : `${nid}`}})
+        return deleteuserNutrient
     }
 
     // test : async () => {

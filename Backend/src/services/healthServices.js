@@ -33,12 +33,10 @@ const healthSerivces = { //건강점수 계산 바꿔야함
                 else{ //case 2 권장치 보다 높을떄
                     
                     if (dailynutrient[j].max == "None"){ //상한치 없을떄
-                        //console.log(nutrientweight[key])
                         health += nutrientweight[dailynutrient[j].nutrient_name]
                     }
                     else{ //상한치 있을떄 
-                        ////console.log(((((value-parseFloat(dailynutrient[j].commend))*100)/dailynutrient[j].max)/100))
-                        if (value-parseFloat(dailynutrient[j].commend) < parseFloat(dailynutrient[j].max)){
+                        if (value-parseFloat(dailynutrient[j].commend) < parseFloat(dailynutrient[j].max)){ //섭취량 - 권장량 >= 상한치 
                             health += (nutrientweight[dailynutrient[j].nutrient_name] - ((((value-parseFloat(dailynutrient[j].commend))*100)/parseFloat(dailynutrient[j].max))/100))
                         }
                     }

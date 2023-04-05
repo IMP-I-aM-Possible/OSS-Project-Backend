@@ -12,6 +12,9 @@ nutritionalRouter.get("/include", nutritionalController.getIncludeInfo);
 //사용자 섭취목록 추가 
 nutritionalRouter.get("/add", nutritionalController.addUserNutrient);
 
+//사용자 섭취목록 삭제 
+nutritionalRouter.get("/delete", nutritionalController.deleteUserNutrient);
+
 //해당 영양제
 nutritionalRouter.get("/:nutritional_id", nutritionalController.getProduct);
 

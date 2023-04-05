@@ -38,9 +38,16 @@ const nutritionalService = {
         }
     }, 
 
-    addUserNutrient: async (uid,nid,count) => { // 사용자 섭취중인 영양제 추가
-        const adduserNutrient = await Nutritional.addUserNutrient(uid,nid,count);
-        return 1
+    addUserNutrient: async (uid,nid) => { // 사용자 섭취중인 영양제 추가
+        const adduserNutrient = await Nutritional.addUserNutrient(uid,nid);
+        if (!adduserNutrient) return {sc:400}
+        return {sc:200}
+    },
+
+    deleteUserNutrient: async (uid,nid) => { // 사용자 섭취중인 영양제 추가
+        const deleteuserNutrient = await Nutritional.deleteUserNutrient(uid,nid);
+        if (!deleteuserNutrient) return {sc:400}
+        return {sc:200}
     }
 }
 

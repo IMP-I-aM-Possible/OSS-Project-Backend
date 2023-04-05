@@ -34,9 +34,19 @@ const nutritionalController = {
     
     addUserNutrient: async (req, res) => {
         try{
-            const adduserNutrient = await nutritionalService.addUserNutrient(req.body.id, req.body.nutritional_id, req.body.count);
+            const adduserNutrient = await nutritionalService.addUserNutrient(req.body.id, req.body.nutritional_id);
             const response = await health.HealthScore(req.body.id)
-            return res.json("성공")
+            return res.json(adduserNutrient)
+        } catch (err) {
+            res.json(err)
+        }
+    },
+    
+    deleteUserNutrient: async (req, res) => {
+        try{
+            const deleteuserNutrient = await nutritionalService.deleteUserNutrient(req.body.id, req.body.nutritional_id);
+            const response = await health.HealthScore(req.body.id)
+            return res.json(deleteuserNutrient)
         } catch (err) {
             res.json(err)
         }
