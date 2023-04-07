@@ -16,7 +16,7 @@ const nutritionalController = {
     getProduct: async (req, res) => {
         try {
             console.log(req.params);
-            const product = await nutritionalService.getProduct(req.params.nutritional_id);
+            const product = await nutritionalService.getProduct(req.params.nid);
             return res.json(product);
         } catch (err) {
             res.json(err);

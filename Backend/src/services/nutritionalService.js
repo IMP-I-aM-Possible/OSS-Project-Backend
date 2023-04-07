@@ -11,8 +11,8 @@ const nutritionalService = {
         };
     },
 
-    getProduct: async (nutritional_id) => {
-        const product = await Nutritional.getProduct(nutritional_id);
+    getProduct: async (nid) => {
+        const product = await Nutritional.getProduct(nid);
         if (!product) return { sc : 400 };
         return {
             sc: 200,

@@ -11,7 +11,7 @@ export class Nutritionals extends Model{
 
 Nutritionals.init(
     {
-        id : {
+        nid : {
             type : DataTypes.CHAR(9),
             primaryKey : true
         },

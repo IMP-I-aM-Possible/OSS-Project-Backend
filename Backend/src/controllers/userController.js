@@ -5,9 +5,6 @@ const userController = {
     login: async (req, res) => {
         try {
             const response = await userService.login(req.body);
-            if (response.sc == "400") {
-                return res.json(response);
-            }
             res.json(response);
         } catch (err) {
             res.json(err);
@@ -26,7 +23,7 @@ const userController = {
 
     check: async (req, res) => {
         try {
-            const response = await userService.check(req.body.id);
+            const response = await userService.check(req.body.uid);
             res.json(response);
         } catch (err) {
             res.json(err);
@@ -63,7 +60,7 @@ const userController = {
 
     logout: async (req, res) => {
         try {
-            const response = await userService.logout(req.body.id);
+            const response = await userService.logout(req.body.uid);
             res.json(response);
         } catch (err) {
             res.json(err);
@@ -72,7 +69,7 @@ const userController = {
 
     secede: async (req, res) => {
         try {
-            const response = await userService.secede(req.body.id);
+            const response = await userService.secede(req.body.uid);
             res.json(response);
         } catch (err) {
             res.json(err);
@@ -82,7 +79,7 @@ const userController = {
     userNutrient: async (req, res) => {
         try {
             const nutrient = await userService.userNutrient(req.body);
-            if (req.body.id === undefined) {
+            if (req.body.uid === undefined) {
                 res.json({
                     sc: 400
                 })

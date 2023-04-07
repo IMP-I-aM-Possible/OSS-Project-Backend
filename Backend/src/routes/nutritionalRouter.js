@@ -13,6 +13,6 @@ nutritionalRouter.get("/include", nutritionalController.getIncludeInfo);
 nutritionalRouter.get("/include/sub", nutritionalController.getIncludeSubInfo);
 
 //해당 영양제
-nutritionalRouter.get("/:nutritional_id", nutritionalController.getProduct);
+nutritionalRouter.get("/:nid", nutritionalController.getProduct);
 
 export default nutritionalRouter;

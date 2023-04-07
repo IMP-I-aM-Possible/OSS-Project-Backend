@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import userRouter from "./routes/userRouter.js";
 import nutritionalRouter from "./routes/nutritionalRouter.js";
+import userpageRouter from "./routes/userpageRouter.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({extended : true})); //extended 는 중첩된 객�
 app.use(cors());
 
 app.use("/",userRouter); //index connect
+app.use("/userpage", userpageRouter); // userpage connect
 app.use("/nutritional", nutritionalRouter); //nutrition connect
 
 app.listen(app.get('port'),()=>{

@@ -3,14 +3,13 @@ import sequelize from "./models/index.js";
 import { Users } from "./models/user.js";
 
 const User = {
-    login : async (id) => {
-        const user = await Users.findOne({ where: { id: `${id}` }, raw: true });
+    login : async (uid) => {
+        const user = await Users.findOne({ where: { uid: `${uid}` }, raw: true });
         return user;
     },
 
     signup : async (client) => {
 
-        console.log(client);
         const user = await Users.create(client
             // id : `${client.id}`,
             // email : `${client.email}`,
@@ -42,8 +41,8 @@ const User = {
     // },
 
     // 사용자 나이 추출 (현재 - 생년월일)
-    getAge : async (id) => {
-        const user = await Users.findOne({ where : { id : `${id}`}, raw : true });
+    getAge : async (uid) => {
+        const user = await Users.findOne({ where : { uid : `${uid}`}, raw : true });
         console.log(user.birth);
         const query = `SELECT FLOOR(DATEDIFF(NOW(), '${user.birth}') / 365);`;
         const getAge = await sequelize.query(query, { type : Sequelize.QueryTypes.SELECT });
@@ -51,14 +50,15 @@ const User = {
         return age;
     },
 
-    userInfo : async (id) => {
-        const user = await Users.findOne({ where : { id : `${id}` }, raw : true });
+    //사용자 정보
+    userInfo : async (uid) => {
+        const user = await Users.findOne({attributes : ['uid', 'email', 'username', 'height', 'weight', 'gender', 'birth'], where : { uid : `${uid}` }, raw : true });
         return user;
     },
 
     //login과 코드 같음...?
-    findById : async (id) => {
-        const user = await Users.findOne({ where: { id: `${id}` }, raw: true });
+    findById : async (uid) => {
+        const user = await Users.findOne({ where: { uid: `${uid}` }, raw: true });
         return user;
     },
 
@@ -72,12 +72,17 @@ const User = {
         return mail;
     },
 
-    secede : async (id) => {
-        const user = await Users.findOne({ where : { id : `${id}`}, raw : true });
+    secede : async (uid) => {
+        const user = await Users.findOne({ where : { uid : `${uid}`}, raw : true });
         if(user) {
-            user = await Users.update({expired_at : Sequelize.literal("NOW()")}, {where : {id : `${id}`}})
+            user = await Users.update({expired_at : Sequelize.literal("NOW()")}, {where : {uid : `${uid}`}})
         }
         return user;
+    },
+
+    updateHealth : async (health,uid) => {
+        const user = await Users.update({ health : `${health}` }, {where : { uid : `${uid}` }})
+        return user
     }
     
 };

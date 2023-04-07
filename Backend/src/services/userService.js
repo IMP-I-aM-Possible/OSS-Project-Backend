@@ -4,13 +4,14 @@ import nutrientFunction from '../functions/nutrientFunction.js';
 import jwt_utils from '../utils/jwt.js';
 import redisClient from '../utils/redis.js';
 import bcrypt from "bcrypt";
+import health from './healthService.js';
 
 
 const userService = {
 
     login: async (body) => {
 
-        const response = await User.login(body.id);
+        const response = await User.login(body.uid);
 
         if(response.expired_at != null) {
             return { 
@@ -24,13 +25,13 @@ const userService = {
 
                 const accessToken = jwt_utils.accessToken(response);
                 const refreshToken = jwt_utils.refreshToken();
-                redisClient.SETEX(response.id, 3600, refreshToken);
+                redisClient.SETEX(response.uid, 3600, refreshToken);
 
-                const { id, username } = response;
+                const { uid, username } = response;
 
                 return {
                     sc: 200,
-                    id,
+                    uid,
                     username,
                     accessToken,
                     refreshToken
@@ -47,7 +48,7 @@ const userService = {
         body.pw = bcryptPw;
 
         //id, nickname 중복 값 처리
-        const findId = await User.findById(body.id);
+        const findId = await User.findById(body.uid);
         const findUsername = await User.findByUsername(body.username);
 
         if (findId != null || findUsername != null) {
@@ -78,11 +79,11 @@ const userService = {
         
     },
 
-    check: async (id) => {
-        const user = await User.findById(id);
+    check: async (uid) => {
+        const user = await User.findById(uid);
 
         //입력값이 DB랑 동일하거나 입력값이 없는 경우
-        if (user || id === undefined) {
+        if (user || uid === undefined) {
             return { sc: 400 };
         }
         return { sc: 200 };
@@ -107,9 +108,9 @@ const userService = {
     },
 
     //authorization에서 accessToken 여부 확인 후 저장된 refreshToken 확인, 존재하면 200, 없으면 400
-    logout: async (id) => {
+    logout: async (uid) => {
 
-        const getRefreshToken = await redisClient.get(id);
+        const getRefreshToken = await redisClient.get(uid);
         if (!getRefreshToken) {
             return {
                 sc: 400,
@@ -117,14 +118,14 @@ const userService = {
             };
         }
 
-        redisClient.del(id);
+        redisClient.del(uid);
 
         return { sc: 200 };
     },
 
-    secede: async (id) => {
+    secede: async (uid) => {
 
-        const user = await User.findById(id);
+        const user = await User.findById(uid);
 
         if (!user) {
             return {
@@ -133,22 +134,22 @@ const userService = {
             };
         }
 
-        redisClient.del(id);
+        redisClient.del(uid);
 
-        await User.secede(user.id);
+        await User.secede(user.uid);
 
         return { sc: 200 };
     },
 
     userNutrient: async (body) => {
 
-        const username = (await User.findById(body.id)).username;
-        const userinfo = await User.userInfo(body.id);
-        const nutrient = await Nutritional.userNutrient(body.id); // 섭취 영양제
+        const user = await User.findById(body.uid);
+        const username = user.username;
+        const nutrient = await Nutritional.userNutrient(body.uid); // 섭취 영양제
         const countNutritional = Object.keys(nutrient).length; // 영양제 수
-        const userAge = await User.getAge(body.id); // 사용자 나이
-        const daily = await Nutritional.getDaily(userAge, userinfo.gender); // 해당 나이 성별에 맞는 하루 영양소 섭취 기준
-        const dailyEating = await Nutritional.getDailyEating(userAge, userinfo.gender); // 권장, 상한 섭취량 제공
+        const userAge = await User.getAge(body.uid); // 사용자 나이
+        const daily = await Nutritional.getDaily(userAge, user.gender); // 해당 나이 성별에 맞는 하루 영양소 섭취 기준
+        const dailyEating = await Nutritional.getDailyEating(userAge, user.gender); // 권장, 상한 섭취량 제공
 
         let userDaily = {}; // 42개 중 필요한 값 저장
         let userEating = {} // 42개 영양소중 사용자가 먹는 영양소만 저장할 object
@@ -181,8 +182,10 @@ const userService = {
             }
         }
 
-        const healthScore = 90; // 건강 점수
-        const otherEating = 0; // 다른 사람 평균
+        //const healthScore = 99;
+        const healthScore = await health.healthScore(body.uid); // 건강 점수
+        console.log(healthScore);
+        const otherEating = 0; // 다른 사람 평균 섭취량
         const recommendNutrient = {마그네슘 : 0, 비타민A : 0, 아미노산 : 0, 이동욱 : 100, 바보 : 200};
 
         return {
@@ -197,7 +200,7 @@ const userService = {
             dailyEating,
             otherEating, // 미완성
             recommendNutrient, // 미완성
-            tmtl // 미완성
+            tmtl
         };
     }
 

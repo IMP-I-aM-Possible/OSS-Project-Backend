@@ -20,7 +20,7 @@ router.post(
 router.post(
     "/login", 
     [
-        check("id").exists(),
+        check("uid").exists(),
         check("pw").exists()/*.isLength({min : 8, max : 12})*/,
         validatorErrorChecker
     ],
@@ -31,7 +31,7 @@ router.post(
 router.post(
     "/signup",
     [
-        check("id").exists(),
+        check("uid").exists(),
         check("pw").exists().isLength({min : 8, max : 16}),
         validatorErrorChecker // 발동
     ],
