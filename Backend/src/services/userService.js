@@ -11,12 +11,13 @@ const userService = {
 
     login: async (body) => {
 
+        console.log(body);
         const response = await User.login(body.uid);
 
-        if(response.expired_at != null) {
-            return { 
-                sc : 200,
-                msg : "회원탈퇴 계정"
+        if (response.expired_at != null) {
+            return {
+                sc: 200,
+                msg: "회원탈퇴 계정"
             }
         }
 
@@ -47,6 +48,8 @@ const userService = {
         const bcryptPw = await bcrypt.hash(body.pw, 10);
         body.pw = bcryptPw;
 
+        console.log(bcryptPw.length);
+
         //id, nickname 중복 값 처리
         const findId = await User.findById(body.uid);
         const findUsername = await User.findByUsername(body.username);
@@ -75,8 +78,8 @@ const userService = {
         };
     },
 
-    privacy : async (body) => {
-        
+    privacy: async (body) => {
+
     },
 
     check: async (uid) => {
@@ -145,6 +148,7 @@ const userService = {
 
         const user = await User.findById(body.uid);
         const username = user.username;
+        const email = user.email;
         const nutrient = await Nutritional.userNutrient(body.uid); // 섭취 영양제
         const countNutritional = Object.keys(nutrient).length; // 영양제 수
         const userAge = await User.getAge(body.uid); // 사용자 나이
@@ -156,7 +160,7 @@ const userService = {
 
         //영양소:{섭취량(defalut:0),권장치.상한치,단위}
         for (let i = 0; i < daily.length; i++) {
-            userDaily[daily[i].nutrient_name] = { eating : 0, commend : daily[i].commend, max : daily[i].max, unit: daily[i].unit };
+            userDaily[daily[i].nutrient_name] = { eating: 0, commend: daily[i].commend, max: daily[i].max, unit: daily[i].unit };
         }
 
         for (let i = 0; i < Object.keys(nutrient).length; i++) {
@@ -169,14 +173,14 @@ const userService = {
                 userEating[key[j]] = userDaily[key[j]]; //사용자가 먹는 것만 추가
             }
         }
-        
+
         const countNutrient = Object.keys(userEating).length; // 중복 제외 영양소 수
         const eatingName = Object.keys(userEating); // 사용자 섭취 중인 영양소
 
         let tmtl = 0; // 과하거나 부족 영양소 섭취량
 
-        for(let i = 0; i < Object.keys(userEating).length; i++) {
-            if(userEating[eatingName[i]].max != null && userEating[eatingName[i]].max - userEating[eatingName[i]].eating < 0) {
+        for (let i = 0; i < Object.keys(userEating).length; i++) {
+            if (userEating[eatingName[i]].max != null && userEating[eatingName[i]].max - userEating[eatingName[i]].eating < 0) {
                 // tmtl[eatingName[i]] = userEating[eatingName[i]].commend - userEating[eatingName[i]].eating;
                 tmtl += 1;
             }
@@ -184,13 +188,14 @@ const userService = {
 
         //const healthScore = 99;
         const healthScore = await health.healthScore(body.uid); // 건강 점수
-        console.log(healthScore);
         const otherEating = 0; // 다른 사람 평균 섭취량
-        const recommendNutrient = {마그네슘 : 0, 비타민A : 0, 아미노산 : 0, 이동욱 : 100, 바보 : 200};
+        const recommendNutritional = await Nutritional.recommendNutritional(); // 추천 영양제
+        const recommendNutrient = { 마그네슘: 0, 비타민A: 0, 아미노산: 0, 이동욱: 100, 바보: 200 };
 
         return {
             sc: 200,
             username,
+            email,
             healthScore,
             nutrient,
             countNutritional,
@@ -198,6 +203,7 @@ const userService = {
             eatingName,
             userEating,
             dailyEating,
+            recommendNutritional,
             otherEating, // 미완성
             recommendNutrient, // 미완성
             tmtl

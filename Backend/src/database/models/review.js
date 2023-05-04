@@ -17,13 +17,13 @@ Review.init(
             primaryKey : true
         },
 
-        uid : {
-            type: DataTypes.STRING(25),
+        nid : {
+            type: DataTypes.CHAR(9),
             allowNull : false
         },
 
-        nid : {
-            type: DataTypes.CHAR(9),
+        uid : {
+            type: DataTypes.STRING(25),
             allowNull : false
         },
 

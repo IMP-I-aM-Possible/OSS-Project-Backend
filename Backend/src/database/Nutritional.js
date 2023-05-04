@@ -57,6 +57,11 @@ const Nutritional = {
         //console.log(includeSubInfo);
 
         return includeSubInfo;
+    },
+
+    recommendNutritional : async () => {
+        const recommendnutritional = await Nutritionals.findAll({attributes : ['nid', 'company', 'name', 'nutrient_info', 'sub_nutrient_info'], order : sequelize.random(), limit : 5 },{ where : { expired_at : null }});
+        return recommendnutritional;
     }
     // test : async () => {
     //     const age = await sequelize.query(`SELECT (TO_DAYS(now())-TO_DAYS('100214')) / 365`, { type : sequelize.QueryTypes.SELECT });

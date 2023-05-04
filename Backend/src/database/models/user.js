@@ -52,6 +52,11 @@ Users.init(
             allowNull : false
         },
 
+        health : {
+            type : DataTypes.INTEGER,
+            allowNull : true
+        },
+
         // created_at : {
         //     type : 'TIMESTAMP',
         //     defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),

@@ -81,8 +81,8 @@ const User = {
     },
 
     updateHealth : async (health,uid) => {
-        const user = await Users.update({ health : `${health}` }, {where : { uid : `${uid}` }})
-        return user
+        const user = await Users.update({ health : `${health}` }, {where : { uid : `${uid}` }});
+        return user;
     }
     
 };
