@@ -10,7 +10,7 @@ nutritionalRouter.get("/information", nutritionalController.getNutritional);
 nutritionalRouter.get("/include", nutritionalController.getIncludeInfo);
 
 //부영양소가 포함된 영양제
-nutritionalRouter.get("/include/sub", nutritionalController.getIncludeSubInfo);
+nutritionalRouter.get("/include/sub", nutritionalController.search);
 
 //해당 영양제
 nutritionalRouter.get("/:nid", nutritionalController.getProduct);

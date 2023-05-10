@@ -32,10 +32,10 @@ const nutritionalController = {
         }
     },
 
-    getIncludeSubInfo: async (req, res) => {
+    search: async (req, res) => {
         try {
-            const includeSubInfo = await nutritionalService.getIncludeSubInfo(req.query.offset); // decodeURIComponent(req.query.info), 
-            return res.json(includeSubInfo);
+            const content = await nutritionalService.search(req.query.search, req.query.offset); // decodeURIComponent(req.query.info), 
+            return res.json(content);
         } catch (err) {
             res.json(err);
         }

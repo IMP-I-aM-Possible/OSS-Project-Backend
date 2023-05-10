@@ -50,13 +50,13 @@ const Nutritional = {
         return includeInfo;
     },
 
-    getIncludeSubInfo : async (offset) => {
-        const includeSubInfo = await Nutritionals.findAll({ where : {
-            sub_nutrient_info : {[Op.substring] : '단백'}
+    search : async (search, offset) => {
+        const content = await Nutritionals.findAll({ where : {
+            name : {[Op.substring] : `${search}`}
         }, offset : (offset - 1) * 48, limit : 48, raw : true });
         //console.log(includeSubInfo);
 
-        return includeSubInfo;
+        return content;
     },
 
     recommendNutritional : async () => {

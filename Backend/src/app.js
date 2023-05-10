@@ -6,6 +6,7 @@ import morgan from "morgan";
 import userRouter from "./routes/userRouter.js";
 import nutritionalRouter from "./routes/nutritionalRouter.js";
 import userpageRouter from "./routes/userpageRouter.js";
+import chatRouter from "./routes/chatRouter.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -21,6 +22,7 @@ app.use(cors());
 app.use("/",userRouter); //index connect
 app.use("/userpage", userpageRouter); // userpage connect
 app.use("/nutritional", nutritionalRouter); //nutrition connect
+app.use("/chat", chatRouter);
 
 app.listen(app.get('port'),()=>{
     console.log("start server");
