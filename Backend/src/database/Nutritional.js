@@ -1,12 +1,18 @@
 import { Nutritionals } from "./models/nutritional.js";
 import { DailyNutrient } from "./models/dailyNutrient.js";
 import { UserNutrient } from "./models/user_nutrient.js";
+import {Review} from "./models/review.js"
 import sequelize from "./models/index.js";
 import { Sequelize } from "sequelize";
 
 const Nutritional = { 
     getDaily : async (age, gender) => {
         const daily = await DailyNutrient.findAll({ where : { age : age, gender : gender }, raw : true});
+        return daily;
+    },
+
+    getDailyNutrient : async (age, gender, nutrient) => {
+        const daily = await DailyNutrient.findOne({ where : { age : age, gender : gender, nutrient_name : nutrient }, raw : true});
         return daily;
     },
 
@@ -30,7 +36,6 @@ const Nutritional = {
 
     findNutritional: async (id) => {
         const find = await Nutritionals.findAll({ where : { id: id }, raw : true });
-        console.log(find)
         return find;
     },
 
@@ -60,6 +65,28 @@ const Nutritional = {
     deleteUserNutrient : async (uid,nid) => {
         const deleteuserNutrient = await UserNutrient.destroy({ where : {uid : `${uid}`, nid : `${nid}`}})
         return deleteuserNutrient
+    },
+
+    recommendNutritional : async (nutrient) => {
+        const recommendnutritional = await Nutritionals.findOne({where: sequelize.literal(`JSON_EXTRACT(nutrient_info, '$."${nutrient}"') <> 0 `), order: sequelize.random()})
+        //const recommendnutritional = await Nutritionals.findAll({order: sequelize.random(), limit : 5},{where : {expired_at : null}})
+        return recommendnutritional
+    },
+
+    getReview : async (nid) => {
+        const getreview = await Review.findAll({where : {nid : nid}, raw : true})
+        return getreview
+    },
+
+    addReview : async (review) => {
+        console.log(review)
+        const addreview = await Review.create(review)
+        return addreview
+    },
+
+    randomNutritional : async () => {
+        const randomnutritional = await Nutritionals.findOne({order : sequelize.random()})
+        return randomnutritional
     }
 
     // test : async () => {

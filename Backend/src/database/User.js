@@ -51,7 +51,7 @@ const User = {
     },
 
     userInfo : async (id) => {
-        const user = await Users.findOne({ where : { id : `${id}` }, raw : true });
+        const user = await Users.findOne({ where : { uid : `${id}` }, raw : true });
         return user;
     },
 

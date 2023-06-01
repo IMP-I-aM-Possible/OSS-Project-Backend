@@ -11,7 +11,7 @@ export class Users extends Model{
 
 Users.init(
     {
-        id : {
+        uid : {
             type: DataTypes.STRING(20),
             primaryKey : true
         },

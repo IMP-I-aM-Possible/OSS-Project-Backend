@@ -11,12 +11,21 @@ const nutritionalService = {
         };
     },
 
-    getProduct: async (nutritional_id) => {
-        const product = await Nutritional.getProduct(nutritional_id);
+    getProduct: async (nid) => {
+        const product = await Nutritional.getProduct(nid);
+        const nutrientcommend = {};
+        const review = await Nutritional.getReview(nid);
         if (!product) return { sc : 400 };
+        const key = Object.keys(product.nutrient_info)
+        for (let i = 0 ; i < key.length; i++){
+            let daily = await Nutritional.getDailyNutrient(24,"M",key[i])
+            nutrientcommend[key[i]] = {commend : daily.commend, unit : daily.unit}
+        }
         return {
             sc: 200,
-            product
+            product,
+            nutrientcommend,
+            review
         };
     },
 
@@ -39,6 +48,7 @@ const nutritionalService = {
     }, 
 
     addUserNutrient: async (uid,nid) => { // 사용자 섭취중인 영양제 추가
+        console.log(uid,nid)
         const adduserNutrient = await Nutritional.addUserNutrient(uid,nid);
         if (!adduserNutrient) return {sc:400}
         return {sc:200}
@@ -48,7 +58,14 @@ const nutritionalService = {
         const deleteuserNutrient = await Nutritional.deleteUserNutrient(uid,nid);
         if (!deleteuserNutrient) return {sc:400}
         return {sc:200}
+    },
+
+    addReview: async (review) => {
+        const addReview = await Nutritional.addReview(review);
+        if (!addReview) return {sc:400}
+        return {sc:200}
     }
+
 }
 
 export default nutritionalService;

@@ -142,7 +142,7 @@ const userService = {
 
     userNutrient: async (body) => {
 
-        const username = (await User.findById(body.id)).username;
+        /* const username = (await User.findById(body.id)).username;
         const userinfo = await User.userInfo(body.id);
         const nutrient = await Nutritional.userNutrient(body.id); // 섭취 영양제
         const countNutritional = Object.keys(nutrient).length; // 영양제 수
@@ -173,11 +173,14 @@ const userService = {
         const eatingName = Object.keys(userEating); // 사용자 섭취 중인 영양소
 
         const healthScore = 90; // 건강 점수
-        const otherEating = 0; // 다른 사람 평균
-        const recommendNutrient = { test : "recommend Test!"};
+        const otherEating = 0; // 다른 사람 평균 */
+        const recommendNutrient = []
+        let recommend = await Nutritional.recommendNutritional();
+        console.log(recommend)
+        let rcnt = 0
         const tmtl = 77;
-
-        return {
+        return recommend
+        /* return {
             sc: 200,
             username,
             healthScore,
@@ -190,7 +193,12 @@ const userService = {
             otherEating, // 미완성
             recommendNutrient, // 미완성
             tmtl // 미완성
-        };
+        }; */
+    },
+
+    userSetting: async (uid) => {
+        const user = await User.userInfo(uid)
+        return user
     }
 
 }

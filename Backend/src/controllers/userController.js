@@ -1,5 +1,5 @@
 import userService from "../services/userService.js";
-
+import healthSerivces from "../services/healthServices.js";
 const userController = {
 
     login: async (req, res) => {
@@ -81,15 +81,26 @@ const userController = {
 
     userNutrient: async (req, res) => {
         try {
-            const nutrient = await userService.userNutrient(req.body);
-            if (req.body.id === undefined) {
+            /* const nutrient = await userService.userNutrient(req.body); */
+            const recommendNutrient = await healthSerivces.recommendNutrient(req.body)
+            if (req.body.uid === undefined) {
                 res.json({
                     sc: 400
                 })
             }
-            res.json(nutrient);
+            res.json(recommendNutrient);
         } catch (err) {
             res.json(err);
+        }
+    },
+
+    userSetting: async (req,res) => {
+        try{
+            const response = await userService.userSetting(req.body.uid)
+            res.json(response)
+        }
+        catch(err){
+            res.json(err)
         }
     }
 

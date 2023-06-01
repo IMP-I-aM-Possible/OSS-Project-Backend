@@ -78,6 +78,11 @@ router.delete(
     "/secede", verifyAccessToken, userController.secede
 );
 
+//유저 setting
+router.post(
+    "/user", userController.userSetting
+);
+
 //token 재발급
 router.post(
     "/refresh", verifyRefreshToken

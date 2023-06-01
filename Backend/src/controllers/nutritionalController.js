@@ -1,5 +1,7 @@
 import nutritionalService from "../services/nutritionalService.js";
+
 import health from "../services/healthServices.js"
+import axios from 'axios'
 const nutritionalController = {
 
     getNutritional: async (req, res) => {
@@ -13,10 +15,10 @@ const nutritionalController = {
 
     },
 
-    getProduct: async (req, res) => {
+    getProduct: async (req, res) => { //상세상품
         try {
             console.log(req.params);
-            const product = await nutritionalService.getProduct(req.params.nutritional_id);
+            const product = await nutritionalService.getProduct(req.params.nid);
             return res.json(product);
         } catch (err) {
             res.json(err);
@@ -34,7 +36,7 @@ const nutritionalController = {
     
     addUserNutrient: async (req, res) => {
         try{
-            const adduserNutrient = await nutritionalService.addUserNutrient(req.body.id, req.body.nutritional_id);
+            const adduserNutrient = await nutritionalService.addUserNutrient(req.body.uid, req.body.nid);
             const response = await health.HealthScore(req.body.id)
             return res.json(adduserNutrient)
         } catch (err) {
@@ -50,7 +52,27 @@ const nutritionalController = {
         } catch (err) {
             res.json(err)
         }
+    },
+
+    addReview : async (req, res) => {
+        try{
+            /* const flaskURL = 'http://192.168.1.17:5000/ask/허리가 쥰나게 아파요'; // Flask 서버의 실제 URL로 변경해야 합니다.
+
+            axios.post(flaskURL)
+            .then(response => {
+                console.log('응답 데이터:', response.data);
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+            }); */
+            const addReview = await nutritionalService.addReview(req.body);
+            return res.json(addReview)
+        } catch (err) {
+            res.json(err)
+        }
     }
+
+
 
 }
 

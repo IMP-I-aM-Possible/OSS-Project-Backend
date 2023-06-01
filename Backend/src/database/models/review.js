@@ -16,16 +16,18 @@ Review.init(
             autoIncrement : true,
             primaryKey : true
         },
+        
+        nid : {
+            type: DataTypes.CHAR(9),
+            allowNull : false
+        },
 
         uid : {
             type: DataTypes.STRING(25),
             allowNull : false
         },
 
-        nid : {
-            type: DataTypes.CHAR(9),
-            allowNull : false
-        },
+        
 
         rating : {
             type : DataTypes.FLOAT,
