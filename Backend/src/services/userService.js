@@ -230,7 +230,7 @@ const userService = {
 
         while(recommendNutritional.length < recommendNutrient.length){
             let recommendlist = await Nutritional.recommendNutritional(recommendNutrient[i]);
-            if (!recommendNutritional.some(element => element.nid == recommendlist.uid)){
+            if (!recommendNutritional.some(element => element.nid == recommendlist.nid)){
                 recommendNutritional.push(recommendlist);
                 i++
             }
