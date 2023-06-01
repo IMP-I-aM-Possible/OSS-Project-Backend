@@ -11,7 +11,6 @@ const userService = {
 
     login: async (body) => {
 
-        console.log(body);
         const response = await User.login(body.uid);
 
         if (response.expired_at != null) {
@@ -44,13 +43,9 @@ const userService = {
     },
 
     signup: async (body) => {
-
         const bcryptPw = await bcrypt.hash(body.pw, 10);
         body.pw = bcryptPw;
-
-        console.log(bcryptPw.length);
-
-        //id, nickname 중복 값 처리
+        //id, username 중복 값 처리
         const findId = await User.findById(body.uid);
         const findUsername = await User.findByUsername(body.username);
 
@@ -59,7 +54,7 @@ const userService = {
         }
 
         const response = await User.signup(body);
-
+        
         if (response) {
             return {
                 sc: 200,
@@ -76,10 +71,6 @@ const userService = {
             sc: 200,
             userinfo
         };
-    },
-
-    privacy: async (body) => {
-
     },
 
     check: async (uid) => {
@@ -145,24 +136,29 @@ const userService = {
     },
 
     userNutrient: async (body) => {
+        
+        const user = await User.findById(body.uid); // 사용자 찾기
 
-        const user = await User.findById(body.uid);
-        const username = user.username;
-        const email = user.email;
+        const username = user.username; //사용자명
+        const email = user.email; // 사용자 이메일
         const nutrient = await Nutritional.userNutrient(body.uid); // 섭취 영양제
+
         const countNutritional = Object.keys(nutrient).length; // 영양제 수
+
         const userAge = await User.getAge(body.uid); // 사용자 나이
+
         const daily = await Nutritional.getDaily(userAge, user.gender); // 해당 나이 성별에 맞는 하루 영양소 섭취 기준
         const dailyEating = await Nutritional.getDailyEating(userAge, user.gender); // 권장, 상한 섭취량 제공
 
         let userDaily = {}; // 42개 중 필요한 값 저장
         let userEating = {} // 42개 영양소중 사용자가 먹는 영양소만 저장할 object
+        let tmtlData = {}; // 사용자 상한 섭취량 넘는 영양소
 
         //영양소:{섭취량(defalut:0),권장치.상한치,단위}
         for (let i = 0; i < daily.length; i++) {
             userDaily[daily[i].nutrient_name] = { eating: 0, commend: daily[i].commend, max: daily[i].max, unit: daily[i].unit };
         }
-
+        
         for (let i = 0; i < Object.keys(nutrient).length; i++) {
 
             const eating = await Nutritional.eatingNutrient(nutrient[i].nid);
@@ -170,10 +166,15 @@ const userService = {
 
             for (let j = 0; j < key.length; j++) { //포함된 영양소를 반복하면서 포함된 값을 더함
                 userDaily[key[j]].eating += parseFloat(nutrientFunction.changeValue(eating.nutrient_info[key[j]], userDaily[key[j]].unit));
+                userDaily[key[j]].eating = Number(parseFloat(userDaily[key[j]].eating).toFixed(1))
                 userEating[key[j]] = userDaily[key[j]]; //사용자가 먹는 것만 추가
+                
+            if(userEating[key[j]].max != null && userEating[key[j]].eating > userEating[key[j]].max) {
+                tmtlData[key[j]] = userEating[key[j]];
+            }
             }
         }
-
+        
         const countNutrient = Object.keys(userEating).length; // 중복 제외 영양소 수
         const eatingName = Object.keys(userEating); // 사용자 섭취 중인 영양소
 
@@ -186,11 +187,64 @@ const userService = {
             }
         }
 
-        //const healthScore = 99;
         const healthScore = await health.healthScore(body.uid); // 건강 점수
-        const otherEating = 0; // 다른 사람 평균 섭취량
-        const recommendNutritional = await Nutritional.recommendNutritional(); // 추천 영양제
-        const recommendNutrient = { 마그네슘: 0, 비타민A: 0, 아미노산: 0, 이동욱: 100, 바보: 200 };
+        const otherEating = 20;  //다른 사람 평균 섭취량
+        //const recommendNutritional = await Nutritional.recommendNutritional(); // 추천 영양제
+
+        let recommendNutrient = []; // 추천 영양소
+        const recommendNutritional = []; //추천 영양제
+        let nutrientName = [
+            "리놀레산", "알파리놀레산", "EPA", "DHA", "메티오닌",
+            "류신", "이소류신", "발린", "라이신", "페닐알라닌",
+            "티로신", "트레오닌", "트립토판", "히스티딘", "비타민A",
+            "비타민D", "비타민E", "비타민K", "비타민C", "티아민",
+            "리보플라빈", "니아신", "피리독신", "엽산", "코발라민",
+            "판토텐산", "비오틴", "칼슘", "인", "나트륨",
+            "칼륨", "마그네슘", "철", "아연",
+            "구리", "망간", "요오드", "셀레늄",
+            "몰리브덴", "크롬"
+        ];
+
+        for (let i = 0; i < nutrient.length; i++) {
+            let eatNutritional = await Nutritional.findNutritional(nutrient[i].nid);
+            let key = Object.keys(eatNutritional[0].nutrient_info);
+            nutrientName = nutrientName.filter((item) => { return !key.includes(item) });
+        }
+
+        if (nutrientName.length >= 5) {
+            while (recommendNutrient.length < 5) {
+                let randomIndex = Math.floor(Math.random() * nutrientName.length);
+                if (!recommendNutrient.includes(nutrientName[randomIndex])) {
+                    recommendNutrient.push(nutrientName[randomIndex]);
+                }
+            }
+        }
+        else {
+            for (let i = 0; i < nutrientName.length; i++) {
+                recommendNutrient.push(nutrientName[i]);
+            }
+
+        }
+
+        let i = 0;
+
+        while(recommendNutritional.length < recommendNutrient.length){
+            let recommendlist = await Nutritional.recommendNutritional(recommendNutrient[i]);
+            if (!recommendNutritional.some(element => element.nid == recommendlist.uid)){
+                recommendNutritional.push(recommendlist);
+                i++
+            }
+            
+        }
+
+        const nutitionalLength = await Nutritional.getNutritionalLength(); // 영양소 전체 개수
+        const people = await User.people(); // 사용자 수
+        let log = await User.userNutrientLog(body.uid); // 메인 로그 표시용
+
+        for(let i = 0; i < log.length; i++) {
+            const name = await Nutritional.getNutritionalName(log[i].nid);
+            log[i].name = Object.values(name)[0];
+        };
 
         return {
             sc: 200,
@@ -203,11 +257,21 @@ const userService = {
             eatingName,
             userEating,
             dailyEating,
+            otherEating,
+            recommendNutrient,
             recommendNutritional,
-            otherEating, // 미완성
-            recommendNutrient, // 미완성
-            tmtl
+            tmtl,
+            nutitionalLength,
+            people,
+            tmtlData,
+            log
         };
+    },
+
+    addUserNutritional: async (uid, nid) => {
+        const addusernutritional = await User.addUserNutritional(uid, nid);
+        if (!addusernutritional) return { sc: 400 };
+        return { sc: 200 };
     }
 
 }

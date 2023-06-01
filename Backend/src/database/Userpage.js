@@ -1,3 +1,4 @@
+import { Sequelize } from "sequelize";
 import { Nutritionals } from "./models/nutritional.js";
 import { UserNutrient } from "./models/user_nutrient.js";
 
@@ -10,7 +11,7 @@ const Userpage = {
     },
 
     deleteUserNutrient : async (uid,nid) => {
-        const deleteUserNutrient = await UserNutrient.destroy({ where : {uid : `${uid}`, nid : `${nid}`}, raw : true});
+        const deleteUserNutrient = await UserNutrient.update({updated_at : Sequelize.literal("NOW()"), expired_at : Sequelize.literal("NOW()")}, {where : {uid : `${uid}`, nid : `${nid}`}, raw : true});
         return deleteUserNutrient;
     }
 

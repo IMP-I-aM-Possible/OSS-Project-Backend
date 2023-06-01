@@ -7,7 +7,7 @@ const nutrientFunction = {
         else if(unit=="mg"){
             return value / 1000;
         }
-        return value;
+        return value
     }
 
 }

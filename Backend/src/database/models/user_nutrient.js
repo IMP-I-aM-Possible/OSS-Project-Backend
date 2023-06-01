@@ -1,5 +1,5 @@
 import sequelize from "./index.js";
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 export class UserNutrient extends Model{
     //buffer에 저장하면 binary 형태로 저장이 되기 때문에 json type으로 다시 변환시켜주기 위함
@@ -28,11 +28,23 @@ UserNutrient.init(
             allowNull : false
         },
 
-        // created_at : {
-        //     type : 'TIMESTAMP',
-        //     defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),
-        //     allowNull : false
-        // }
+        created_at : {
+            type : 'TIMESTAMP',
+            defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull : false
+        },
+
+        updated_at : {
+            type : 'TIMESTAMP',
+            defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull : false
+        },
+
+        expired_at : {
+            type : 'TIMESTAMP',
+            defaultValue : Sequelize.literal('null'),
+            allowNull : true
+        }
     },
 
     {

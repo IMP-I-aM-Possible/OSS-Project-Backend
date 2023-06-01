@@ -24,9 +24,11 @@ const userpageService = {
         }
     },
     
-    deleteUserNutrient: async (uid, nid) => {
-        const deleteUserNutrient = await Userpage.deleteUserNutrient(uid, nid);
-        if (!deleteUserNutrient) return { sc : 400 };
+    deleteUserNutrient: async (uid, selected) => {
+        for(let i = 0; i<selected.length;i++){
+            const deleteUserNutrient = await Userpage.deleteUserNutrient(uid, selected[i]);
+            if (!deleteUserNutrient) return { sc : 400 };
+        }
         return { 
             sc : 200
          };

@@ -1,10 +1,10 @@
 import nutritionalService from "../services/nutritionalService.js";
+import searchService from "../services/searchService.js";
 
 const nutritionalController = {
 
     getNutritional: async (req, res) => {
         try {
-            console.log(req.query);
             const nutritional = await nutritionalService.getNutritional(req.query.offset);
             return res.json(nutritional);
         } catch (err) {
@@ -15,7 +15,6 @@ const nutritionalController = {
 
     getProduct: async (req, res) => {
         try {
-            console.log(req.params);
             const product = await nutritionalService.getProduct(req.params.nid);
             return res.json(product);
         } catch (err) {
@@ -32,12 +31,33 @@ const nutritionalController = {
         }
     },
 
-    search: async (req, res) => {
+    search : async (req, res) => {
         try {
-            const content = await nutritionalService.search(req.query.search, req.query.offset); // decodeURIComponent(req.query.info), 
-            return res.json(content);
+            if(req.query.info == "name") {
+                const includeInfo = await nutritionalService.search(req.query.info, req.query.search, req.query.offset); // decodeURIComponent(req.query.info), 
+                return res.json(includeInfo);
+            } else if (req.query.info == "symptom") {
+                const includeInfo = await searchService.getData(req.query.search, req.query.offset);
+                /* let data = {};
+                for(let i = 0; i < includeInfo.length; i++) {
+                    data += await nutritionalService.getSubIncludeInfo(includeInfo[i]);
+                }
+
+                console.log(data); */
+                return res.json(includeInfo);
+            }
+            
         } catch (err) {
             res.json(err);
+        }
+    },
+
+    addReview: async (req, res) => {
+        try{
+            const addReview = await nutritionalService.addReview(req.body)
+            return res.json(addReview)
+        } catch (err) {
+            res.json(err)
         }
     }
 

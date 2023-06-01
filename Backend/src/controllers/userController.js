@@ -16,7 +16,7 @@ const userController = {
             const response = await userService.signup(req.body);
             res.json(response);
         } catch (err) {
-            //res.json(err);
+
             res.status(400).json(err);
         }
     },
@@ -88,7 +88,16 @@ const userController = {
         } catch (err) {
             res.json(err);
         }
-    }
+    },
+
+    addUserNutrient: async (req, res) => {
+        try{
+            const adduserNutrient = await userService.addUserNutritional(req.body.uid, req.body.nid);
+            return res.json(adduserNutrient)
+        } catch (err) {
+            res.json(err)
+        }
+    },
 
 }
 

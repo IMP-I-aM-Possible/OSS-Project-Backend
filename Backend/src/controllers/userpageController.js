@@ -14,13 +14,9 @@ const userpageController = {
 
     deleteUserNutrient: async (req, res) => {
         try{
-            //console.log(req.body.selected.length);
-
-            for(let i = 0; i < req.body.selected.length; i++) {
-                await userpageService.deleteUserNutrient(req.body.uid, req.body.selected[i]);
-            }
+            await userpageService.deleteUserNutrient(req.body.uid, req.body.selected);
             const response = await health.healthScore(req.body.uid);
-            return res.json(response);
+            res.json(response);
         } catch (err) {
             res.json(err);
         }

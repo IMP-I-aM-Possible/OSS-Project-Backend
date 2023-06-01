@@ -38,12 +38,6 @@ router.post(
     userController.signup
 );
 
-//사욪자 개인 정보 페이지
-router.post(
-    "/privacy",
-    verifyAccessToken
-);
-
 //ID 중복 검사
 router.post(
     "/signup/check",
@@ -83,6 +77,10 @@ router.post(
     "/refresh", verifyRefreshToken
 );
 
+//사용자 섭취 목록 추가 
+router.post(
+    "/add", userController.addUserNutrient
+);
 
 //refresh 접속 후 다른 페이지 접속해야 재발급 가능?
 

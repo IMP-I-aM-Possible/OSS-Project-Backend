@@ -62,7 +62,7 @@ Nutritionals.init(
         },
 
         sub_nutrient_info : {
-            type : DataTypes.JSON,
+            type : DataTypes.TEXT,
         },
 
         daily_eating : {
